@@ -1,0 +1,834 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a periodic table server. you can try different API calls related to periodic table.",
+    "version": "1.0.0",
+    "title": "Swagger periodic table",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "periodic-table-aw5x.onrender.com",
+  "tags": [
+    {
+      "name": "element",
+      "description": "different types of operations on chemical elements."
+    },
+    {
+      "name": "group",
+      "description": "retrieving different kind of information about chemical groups."
+    },
+    {
+      "name": "property",
+      "description": "different information and operations over chemical elements properties"
+    }
+  ],
+  "schemes": ["https", "http"],
+  "paths": {
+    "/element/get-element-based-on-index/{elementIndex}": {
+      "get": {
+        "tags": ["element"],
+        "summary": "returns an element",
+        "description": "returns chemical element details based on provided element index in periodic table",
+        "operationId": "retrieveElementIndex",
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "elementIndex",
+            "in": "path",
+            "description": "Index of element in periodic table, must be a number between 1 to 118",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": { "$ref": "#/definitions/GetElementIndex" }
+          },
+          "404": {
+            "description": "element not found",
+            "schema": { "$ref": "#/definitions/NoElementIndex" }
+          }
+        }
+      }
+    },
+    "/element/get-elements-property-ordered/{propertyName}&{recordLimit}&{orderType}": {
+      "get": {
+        "tags": ["element"],
+        "summary": "returns array of elements",
+        "description": "returns array of sorted elements with provided property name and limited to provided record limit",
+        "operationId": "retrieveOrderedElementListBasedOnPropertyName",
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "propertyName",
+            "in": "path",
+            "description": "a valid propery name, density, yearDiscovered, meltingPoint, boilingPoint, electronegativity, electronAffinity, atomicNumber, atomicMass, atomicRadius, ionizationEnergy",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "recordLimit",
+            "in": "path",
+            "description": "number of returned records in periodic table, must be a number between 1 to 118",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "orderType",
+            "in": "path",
+            "description": "order of elements based on slected property, either Desc or Asc",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/GetAlphabeticallyOrderedElementList"
+            }
+          },
+          "422": {
+            "description": "one of above user inputs were not valid",
+            "schema": { "$ref": "#/definitions/NoElementIndex" }
+          }
+        }
+      }
+    },
+    "/element/get-ancient-elements": {
+      "get": {
+        "tags": ["element"],
+        "summary": "returns array of ancient elements",
+        "description": "returns array of elements discovered in acient era",
+        "operationId": "retrieveAncientElementList",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/GetAncientElementList"
+            }
+          }
+        }
+      }
+    },
+    "/element/get-alphabetically-ordered-elements/{nameType}&{recordLimit}&{orderType}": {
+      "get": {
+        "tags": ["element"],
+        "summary": "returns array of sorted elements",
+        "description": "returns array of sorted elements alphabetically ordered and limited to provided record limit",
+        "operationId": "retrieveOrderedElementListBasedOnAlphabet",
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "nameType",
+            "in": "path",
+            "description": "a valid name type, either name or symbol",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "recordLimit",
+            "in": "path",
+            "description": "number of returned records in periodic table, must be a number between 1 to 118",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "orderType",
+            "in": "path",
+            "description": "order of elements based on slected property, either Desc or Asc",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/GetOrderedElementListBasedOnPropertyName"
+            }
+          },
+          "422": {
+            "description": "one of above user inputs were not valid",
+            "schema": { "$ref": "#/definitions/NoElementIndex" }
+          }
+        }
+      }
+    },
+    "/element/get-standard-state-based-elements/{standardState}": {
+      "get": {
+        "tags": ["element"],
+        "summary": "returns array of elements in the form of standard state",
+        "description": "returns array of elements based on provided standard state by user",
+        "operationId": "retrieveElementListBasedOnStandardState",
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "standardState",
+            "in": "path",
+            "description": "a valid standard state, either Liquid, Gas, or Solid",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/GetElementListBasedOnStandardState"
+            }
+          },
+          "422": {
+            "description": "above user inputs were not valid",
+            "schema": { "$ref": "#/definitions/NoElementIndex" }
+          }
+        }
+      }
+    },
+    "/element/get-elements-based-on-group-block/{groupBlock}": {
+      "get": {
+        "tags": ["element"],
+        "summary": "returns array of elements belong to a group block",
+        "description": "returns array of elements based on provided group block by user",
+        "operationId": "retrieveElementListBasedOnGroupBlock",
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "groupBlock",
+            "in": "path",
+            "description": "a valid group block, Alkali metal,Post-transition metal,Transition metal,Lanthanide,Halogen,Alkaline earth metal,Nonmetal,Noble gas,Actinide,Metalloid",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/GetElementListBasedOnGroupBlock"
+            }
+          },
+          "422": {
+            "description": "above user inputs were not valid",
+            "schema": { "$ref": "#/definitions/NoElementIndex" }
+          }
+        }
+      }
+    },
+    "/group/get-group-elements/{groupIndex}": {
+      "get": {
+        "tags": ["group"],
+        "summary": "returns array of elements belong to a goup",
+        "description": "returns list of elements belong to a group index",
+        "operationId": "retrieveGroupElementsIndex",
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "groupIndex",
+            "in": "path",
+            "description": "Index of group in periodic table, must be a number between 1 to 17",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": { "$ref": "#/definitions/GetGroupElementsIndex" }
+          },
+          "404": {
+            "description": "group not found",
+            "schema": { "$ref": "#/definitions/NoElementIndex" }
+          }
+        }
+      }
+    },
+    "/group/get-group-description/{groupIndex}": {
+      "get": {
+        "tags": ["group"],
+        "summary": "returns description of a group",
+        "description": "returns description of a group based on provided group index",
+        "operationId": "retrieveGroupDescription",
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "groupIndex",
+            "in": "path",
+            "description": "Index of group in periodic table, must be a number between 1 to 17",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": { "$ref": "#/definitions/GetGroupDescription" }
+          },
+          "404": {
+            "description": "group not found",
+            "schema": { "$ref": "#/definitions/NoElementIndex" }
+          }
+        }
+      }
+    },
+    "/group/get-group-names": {
+      "get": {
+        "tags": ["group"],
+        "summary": "returns array of chemical groups",
+        "description": "returns array of chemical groups",
+        "operationId": "retrieveListOfGroups",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": { "$ref": "#/definitions/GetGroupElementsIndex" }
+          }
+        }
+      }
+    },
+    "/property/get-min-max-element-property/{propertyName}": {
+      "get": {
+        "tags": ["property"],
+        "summary": "returns array of min and max elements",
+        "description": "returns array of elements that have min and max amount of provided property",
+        "operationId": "retrieveMaxMinListBasedOnPropertyName",
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "propertyName",
+            "in": "path",
+            "description": "a valid propery name, density, yearDiscovered, meltingPoint, boilingPoint, electronegativity, electronAffinity, atomicNumber, atomicMass, atomicRadius, ionizationEnergy",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/GetMinMaxElements"
+            }
+          },
+          "422": {
+            "description": "above user inputs was not valid",
+            "schema": { "$ref": "#/definitions/NoElementIndex" }
+          }
+        }
+      }
+    },
+    "/property/get-periodic-table-properties-range": {
+      "get": {
+        "tags": ["property"],
+        "summary": "returns array of min, avg, max properties",
+        "description": "returns array of minimum, maximum, and average measurable properties",
+        "operationId": "retrieveMinAvgMaxProperties",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/GetMinAvgMaxProperties"
+            }
+          }
+        }
+      }
+    },
+    "/property/get-elements-within-range/{propertyName}&{propertyRange}&{orderType}": {
+      "get": {
+        "tags": ["property"],
+        "summary": "returns array of elements within provided range",
+        "description": "returns array of sorted elements and limited to provided range in provided property name",
+        "operationId": "retrieveOrderedElementListBasedOnPropertyNameAndRange",
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "propertyName",
+            "in": "path",
+            "description": "a valid propery name, density, yearDiscovered, meltingPoint, boilingPoint, electronegativity, electronAffinity, atomicNumber, atomicMass, atomicRadius, ionizationEnergy",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "propertyRange",
+            "in": "path",
+            "description": "provide a range in range1-range2 format where range1 < range2",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "orderType",
+            "in": "path",
+            "description": "order of elements based on slected property, either Desc or Asc",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/GetOrderedElementListBasedOnPropertyNameAndRange"
+            }
+          },
+          "422": {
+            "description": "one of above user inputs were not valid",
+            "schema": { "$ref": "#/definitions/NoElementIndex" }
+          }
+        }
+      }
+    },
+    "/property/get-chemical-compound-atomic-mass/{chemicalCompound}": {
+      "get": {
+        "tags": ["property"],
+        "summary": "returns atomic mass of compound",
+        "description": "returns atomic mass of a compound, if the compound is in a valid format",
+        "operationId": "retrieveCompoundAtomicMass",
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "chemicalCompound",
+            "in": "path",
+            "description": "a valid chemical compound. if there is a paranthesis, make sure you close them after opening them",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/GetCompoundAtomicMass"
+            }
+          },
+          "404": {
+            "description": "above compound was not valid",
+            "schema": { "$ref": "#/definitions/NoElementIndex" }
+          }
+        }
+      }
+    },
+    "/property/get-elements-electron-affinity-based-ordered/{elementList}": {
+      "get": {
+        "tags": ["property"],
+        "summary": "returns elements comparisons",
+        "description": "returns elements comparisons based on their electron affinity, or returns array of invaid elements or elements with no electron affinity",
+        "operationId": "retrieveElementComparisonBasedOnElectronAffinity",
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "elementList",
+            "in": "path",
+            "description": "a comma separated list of valid element symbols, e.g. : Ag,O,F,Cl,Be,Ca",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/GetElectronAffinityComparison"
+            }
+          },
+          "422": {
+            "description": "none of above elements were not valid",
+            "schema": { "$ref": "#/definitions/NoElementIndex" }
+          }
+        }
+      }
+    },
+    "/property/get-element-one-atom-mass/{elementSymbol}": {
+      "get": {
+        "tags": ["property"],
+        "summary": "returns mass of one atom",
+        "description": "returns mass of one atom of provided element symbol by user in grams",
+        "operationId": "retrieveElementOneAtomMass",
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "elementSymbol",
+            "in": "path",
+            "description": "a valid element symbols, e.g. : Ag, O, F, Cl, Be, Ca",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/GetElementOneAtomMass"
+            }
+          },
+          "422": {
+            "description": "above element symbol was not valid",
+            "schema": { "$ref": "#/definitions/NoElementIndex" }
+          }
+        }
+      }
+    },
+    "/property/get-element-mole-to-mass/{elementSymbol}&{moleAmount}": {
+      "get": {
+        "tags": ["property"],
+        "summary": "returns mass of x moles of provided element",
+        "description": "returns mass of x moles of provided element symbol by user in grams",
+        "operationId": "retrieveElementMoleToMass",
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "elementSymbol",
+            "in": "path",
+            "description": "a valid element symbols, e.g. : Ag, O, F, Cl, Be, Ca",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "moleAmount",
+            "in": "path",
+            "description": "a valid mole amount",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/GetElementOneAtomMass"
+            }
+          },
+          "422": {
+            "description": "above element symbol was not valid",
+            "schema": { "$ref": "#/definitions/NoElementIndex" }
+          }
+        }
+      }
+    },
+    "/property/get-element-mass-to-mole/{elementSymbol}&{amountInGrams}": {
+      "get": {
+        "tags": ["property"],
+        "summary": "returns moles of x grams of provided element",
+        "description": "returns mole of x grams of provided element symbol by user in grams",
+        "operationId": "retrieveElementMassToMole",
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "elementSymbol",
+            "in": "path",
+            "description": "a valid element symbols, e.g. : Ag, O, F, Cl, Be, Ca",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "amountInGrams",
+            "in": "path",
+            "description": "a valid mass in grams",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/GetElementOneAtomMass"
+            }
+          },
+          "422": {
+            "description": "above element symbol was not valid",
+            "schema": { "$ref": "#/definitions/NoElementIndex" }
+          }
+        }
+      }
+    },
+    "/property/get-element-mass-to-atoms/{elementSymbol}&{amountInGrams}": {
+      "get": {
+        "tags": ["property"],
+        "summary": "returns number of Atoms of x grams of provided element",
+        "description": "returns number of atoms of x grams of provided element symbol by user in grams",
+        "operationId": "retrieveElementMassToAtoms",
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "elementSymbol",
+            "in": "path",
+            "description": "a valid element symbols, e.g. : Ag, O, F, Cl, Be, Ca",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "amountInGrams",
+            "in": "path",
+            "description": "a valid mass in grams",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/GetElementOneAtomMass"
+            }
+          },
+          "422": {
+            "description": "above element symbol was not valid",
+            "schema": { "$ref": "#/definitions/NoElementIndex" }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ElementObjectDetails": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "symbol": { "type": "string" },
+        "atomicNumber": { "type": "integer", "format": "int64" },
+        "atomicMass": { "type": "number", "format": "double" },
+        "standardState": { "type": "string" },
+        "oxidationStates": { "type": "string" },
+        "electronegativity": { "type": "number", "format": "double" },
+        "atomicRadius": { "type": "number", "format": "double" },
+        "ionizationEnergy": { "type": "number", "format": "double" },
+        "electronAffinity": { "type": "number", "format": "double" },
+        "electronConfiguration": { "type": "string" },
+        "meltingPoint": { "type": "number", "format": "double" },
+        "boilingPoint": { "type": "number", "format": "double" },
+        "density": { "type": "number", "format": "double" },
+        "groupBlock": { "type": "string" },
+        "yearDiscovered": { "type": "integer", "format": "int64" }
+      },
+      "xml": { "name": "ElementObjectDetails" }
+    },
+    "GetElementIndex": {
+      "type": "object",
+      "properties": {
+        "element": { "$ref": "#/definitions/ElementObjectDetails" },
+        "message": { "type": "string" }
+      },
+      "xml": { "name": "GetElementIndex" }
+    },
+    "NoElementIndex": {
+      "type": "object",
+      "properties": {
+        "status": { "type": "integer", "format": "int64" },
+        "message": { "type": "string" }
+      }
+    },
+    "ElementBasedOnPropertyNameObject": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "symbol": { "type": "string" },
+        "yearDiscovered": { "type": "integer", "format": "int64" }
+      }
+    },
+    "GetOrderedElementListBasedOnPropertyName": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "data": {
+          "type": "array",
+          "xml": { "wrapped": true },
+          "items": { "$ref": "#/definitions/ElementBasedOnPropertyNameObject" }
+        }
+      },
+      "xml": { "name": "GetOrderedElementListBasedOnPropertyName" }
+    },
+    "GetAncientElementList": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "data": { "$ref": "#/definitions/ElementObjectDetails" }
+      },
+      "xml": { "name": "GetAncientElementList" }
+    },
+    "GetAlphabeticallyOrderedElementList": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "data": {
+          "type": "array",
+          "xml": { "wrapped": true },
+          "items": { "type": "string" }
+        }
+      },
+      "xml": { "name": "GetAlphabeticallyOrderedElementList" }
+    },
+    "ElementStandardStateObject": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "symbol": { "type": "string" },
+        "standardState": { "type": "string" }
+      }
+    },
+    "GetElementListBasedOnStandardState": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "data": {
+          "type": "array",
+          "xml": { "wrapped": true },
+          "items": { "$ref": "#/definitions/ElementStandardStateObject" }
+        }
+      },
+      "xml": { "name": "GetElementListBasedOnStandardState" }
+    },
+    "ElementGroupBlockObject": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "symbol": { "type": "string" },
+        "groupBlock": { "type": "string" }
+      }
+    },
+    "GetElementListBasedOnGroupBlock": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "data": {
+          "type": "array",
+          "xml": { "wrapped": true },
+          "items": { "$ref": "#/definitions/ElementGroupBlockObject" }
+        }
+      },
+      "xml": { "name": "GetElementListBasedOnGroupBlock" }
+    },
+    "GetGroupElementsIndex": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "data": {
+          "type": "array",
+          "xml": { "wrapped": true },
+          "items": { "type": "string" }
+        }
+      },
+      "xml": { "name": "GetGroupElementsIndex" }
+    },
+    "GetGroupDescription": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "data": { "type": "string" }
+      },
+      "xml": { "name": "GetGroupDescription" }
+    },
+    "MinMaxElementObject": {
+      "type": "object",
+      "properties": {
+        "min": { "$ref": "#/definitions/ElementObjectDetails" },
+        "max": { "$ref": "#/definitions/ElementObjectDetails" }
+      },
+      "xml": { "name": "MinMaxElementObject" }
+    },
+    "GetMinMaxElements": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "data": { "$ref": "#/definitions/MinMaxElementObject" }
+      },
+      "xml": { "name": "GetMinMaxElements" }
+    },
+    "MinMaxElementObjectDetails": {
+      "type": "object",
+      "properties": {
+        "average": { "type": "number", "format": "double" },
+        "max": { "type": "number", "format": "double" },
+        "min": { "type": "number", "format": "double" }
+      },
+      "xml": { "name": "MinMaxElementObjectDetails" }
+    },
+    "MinAvgMaxPropertyObject": {
+      "type": "object",
+      "properties": {
+        "propertyName": { "$ref": "#/definitions/MinMaxElementObjectDetails" }
+      },
+      "xml": { "name": "MinAvgMaxPropertyObject" }
+    },
+    "GetMinAvgMaxProperties": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "data": {
+          "type": "array",
+          "xml": { "wrapped": true },
+          "items": { "$ref": "#/definitions/MinAvgMaxPropertyObject" }
+        }
+      },
+      "xml": { "name": "GetMinAvgMaxProperties" }
+    },
+    "ElementPropertyRangeObject": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "symbol": { "type": "string" },
+        "property": { "type": "number", "format": "double" }
+      },
+      "xml": { "name": "ElementPropertyRangeObject" }
+    },
+    "GetOrderedElementListBasedOnPropertyNameAndRange": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "data": {
+          "type": "array",
+          "xml": { "wrapped": true },
+          "items": { "$ref": "#/definitions/ElementPropertyRangeObject" }
+        }
+      },
+      "xml": { "name": "GetOrderedElementListBasedOnPropertyNameAndRange" }
+    },
+    "GetCompoundAtomicMass": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "data": { "type": "string" }
+      },
+      "xml": { "name": "GetCompoundAtomicMass" }
+    },
+    "GetElectronAffinityComparison": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "invalidElements": { "type": "string" },
+        "noElectronAffinityElements": { "type": "string" },
+        "comparisonResult": { "type": "string" }
+      },
+      "xml": { "name": "GetElectronAffinityComparison" }
+    },
+    "GetElementOneAtomMass": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "data": { "type": "number", "format": "double" }
+      },
+      "xml": { "name": "GetElectronAffinityComparison" }
+    }
+  }
+}
